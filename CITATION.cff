@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the accompanying manuscript."
+type: software
+
+title: "Simulation code for practical positivity violations in longitudinal dynamic treatment regimes"
+
+authors:
+  - family-names: "Rop"
+    given-names: "Mercy"
+  - family-names: "Machekano"
+    given-names: "Rhoderick"
+version: "1.0.0"
+date-released: 2026-08-24
+
+repository-code: "https://github.com/Mercyrop/positivity-dtr-simulation"
+
+keywords:
+  - causal inference
+  - dynamic treatment regimes
+  - positivity
+  - longitudinal data
+  - HIV
+  - simulation study
