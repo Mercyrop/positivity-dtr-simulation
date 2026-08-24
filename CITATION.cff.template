@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the accompanying manuscript."
+title: "Simulation code for practical positivity violations in longitudinal dynamic treatment regimes"
+type: software
+authors:
+  - family-names: "ADD_FAMILY_NAME"
+    given-names: "ADD_GIVEN_NAMES"
+repository-code: "ADD_GITHUB_REPOSITORY_URL"
+# doi: "ADD_ARTICLE_DOI_WHEN_AVAILABLE"
+# date-released: YYYY-MM-DD

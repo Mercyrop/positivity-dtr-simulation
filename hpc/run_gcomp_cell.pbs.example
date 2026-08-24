@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N positivity_gcomp
+#PBS -l select=1:ncpus=24:mem=64gb
+#PBS -l walltime=48:00:00
+#PBS -j oe
+
+set -euo pipefail
+cd "${PBS_O_WORKDIR:?Submit this job from the repository root}"
+
+module purge
+module load app/R/4.5.1
+
+: "${N_VAL:?Set N_VAL to 500, 1500, or 5000}"
+: "${SCENARIO:?Set SCENARIO to benchmark, mild, moderate, or severe}"
+N_SIM="${N_SIM:-1000}"
+B_VAL="${B_VAL:-200}"
+NCPUS="${NCPUS:-24}"
+
+Rscript --vanilla scripts/03_run_gcomp_bootstrap.R \
+  "$N_VAL" "$SCENARIO" "$N_SIM" "$B_VAL" "$NCPUS"

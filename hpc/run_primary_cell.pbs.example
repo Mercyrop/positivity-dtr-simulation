@@ -1,0 +1,57 @@
+#!/bin/bash
+#PBS -N positivity_primary
+#PBS -l select=1:ncpus=24:mem=64gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+set -euo pipefail
+cd "${PBS_O_WORKDIR:?Submit this job from the repository root}"
+
+module purge
+module load app/R/4.5.1
+
+: "${N_VAL:?Set N_VAL to 500, 1500, or 5000}"
+: "${SCENARIO:?Set SCENARIO to benchmark, mild, moderate, or severe}"
+N_SIM="${N_SIM:-1000}"
+NCPUS="${NCPUS:-24}"
+
+# The primary public runner covers the full grid. For cluster cell-wise runs,
+# use the compact inline driver below to keep jobs independent.
+Rscript --vanilla - "$N_VAL" "$SCENARIO" "$N_SIM" "$NCPUS" <<'RS'
+args <- commandArgs(trailingOnly = TRUE)
+n_val <- as.integer(args[1]); scenario <- args[2]
+n_sim <- as.integer(args[3]); workers <- as.integer(args[4])
+
+source("R/01_data_generating_mechanism.R")
+source("R/02_estimators.R")
+
+grid <- data.frame(
+  n = n_val,
+  scenario = scenario,
+  sim = seq_len(n_sim),
+  stringsAsFactors = FALSE
+)
+grid$seed <- as.integer(mapply(make_seed_v7, grid$n, grid$scenario, grid$sim))
+
+run_one <- function(i) {
+  row <- grid[i, ]
+  est <- one_sim_all_estimators_v7(
+    n = row$n, seed = row$seed, scenario = row$scenario, gcomp_B = 0L
+  )
+  cbind(row, failed = FALSE, as.data.frame(as.list(est), check.names = FALSE))
+}
+
+if (workers > 1L) {
+  library(future); library(future.apply)
+  plan(multisession, workers = workers)
+  out <- future_lapply(seq_len(nrow(grid)), run_one, future.seed = TRUE)
+  plan(sequential)
+} else {
+  out <- lapply(seq_len(nrow(grid)), run_one)
+}
+res <- dplyr::bind_rows(out)
+dir.create("results", showWarnings = FALSE)
+outfile <- sprintf("results/primary_simulation_n%d_%s.rds", n_val, scenario)
+saveRDS(res, outfile)
+write.csv(res, sub("\\.rds$", ".csv", outfile), row.names = FALSE)
+RS
