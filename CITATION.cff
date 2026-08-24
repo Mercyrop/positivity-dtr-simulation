@@ -11,6 +11,7 @@ authors:
     given-names: "Rhoderick"
 version: "1.0.0"
 date-released: 2026-08-24
+doi: "10.5281/zenodo.22081449"
 
 repository-code: "https://github.com/Mercyrop/positivity-dtr-simulation"
 
