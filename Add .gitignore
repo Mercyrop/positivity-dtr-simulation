@@ -1,0 +1,26 @@
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+.DS_Store
+Thumbs.db
+
+# Generated simulation outputs
+results/*
+!results/.gitkeep
+!results/README.md
+figures/*
+!figures/.gitkeep
+!figures/README.md
+
+# Cluster logs and transient files
+*.o[0-9]*
+*.e[0-9]*
+*.log
+logs/
+
+# Temporary/editor files
+*~
+*.swp
+*.tmp
